@@ -1,61 +1,39 @@
-export default function Root() {
-    return (
-      <>
-        import axios, { AxiosResponse } from 'axios';
 
-interface Movie {
-    
-    id: number;
-    title: string;
-    // Aggiungi altri campi se necessario
-}
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { Grid } from '@chakra-ui/react';
+import MovieCard from './/home/kareem/simulazione/sim/simulazione/src/components/moviecard.tsx';
 
-const apiUrl = "https://api.example.com/movies";
+const MovieList = () => {
+  const [movies, setMovies] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-// Funzione per ottenere l'elenco dei film
-async function getMovies(): Promise<Movie[] | null> {
-    try {
+  useEffect(() => {
+    const fetchMovies = async () => {
+      try {
+        const response = await axios.get('https://api.themoviedb.org/3/genre/movie/list?language=it&api_key=2d6d8d1f0543c7be09efd1d0eaf1bd3c');
+        setMovies(response.data);
+        setLoading(false);
+      } catch (error) {
+        console.error('Errore durante il recupero dei film', error);
+        setLoading(false);
+      }
+    };
 
-        const response: AxiosResponse<Movie[]> = await axios.get(apiUrl);
+    fetchMovies();
+  }, []);
 
-        // Verifica se la richiesta ha avuto successo (codice di stato 200)
-        if (response.status === 200) {
+  return (
+    <Grid templateColumns="repeat(4, 1fr)" gap={6}>
+      {loading ? (
+        <p>Loading...</p>
+      ) : (
+        movies.map((movie) => (
+          <MovieCard key={movie.id} movie={movie} />
+        ))
+      )}
+    </Grid>
+  );
+};
 
-            return response.data;
-        } else {
-            console.error(`Errore nella richiesta: ${response.status}`);
-            return null;
-        }
-    } catch (error) {
-        console.error(`Errore durante la richiesta: ${error.message}`);
-        return null;
-    }
-}
-
-// Funzione per ottenere i dettagli di un film specifico
-async function getDetailMovie(movieId: number): Promise<Movie | null> {
-    const url = `${apiUrl}/${movieId}`;
-
-    try {
-        const response: AxiosResponse<Movie> = await axios.get(url);
-
-        // Verifica se la richiesta ha avuto successo (codice di stato 200)
-        if (response.status === 200) {
-
-            return response.data;
-        } else {
-            console.error(`Errore nella richiesta: ${response.status}`);
-            return null;
-        }
-    } catch (error) {
-        console.error(`Errore durante la richiesta: ${error.message}`);
-        return null;
-    }
-}
-
-main();
-
-        <div id="detail"></div>
-      </>
-    );
-  }
+export default MovieList;
