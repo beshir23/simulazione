@@ -1,0 +1,2 @@
+GET https://api.themoviedb.org/3/genre/movie/list?language=it&api_key=2d6d8d1f0543c7be09efd1d0eaf1bd3c
+##Authorization: "2d6d8d1f0543c7be09efd1d0eaf1bd3c"
